@@ -1,0 +1,125 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    #sidenav
+    class="shell__nav"
+    [mode]="isCompact() ? 'over' : 'side'"
+    [opened]="!isCompact()"
+    [fixedInViewport]="isCompact()"
+  >
+    <div class="nav">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">
+          <mat-icon>storefront</mat-icon>
+        </span>
+        <span class="brand__text">
+          <span class="brand__name">Merchant onboarding</span>
+          <span class="brand__tagline">Risk &amp; review portal</span>
+        </span>
+      </div>
+
+      <nav aria-label="Main" class="nav__section">
+        <p class="nav__heading" aria-hidden="true">Workspace</p>
+        <mat-nav-list>
+          <a
+            mat-list-item
+            routerLink="/applications"
+            routerLinkActive="nav__link--active"
+            #listLink="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [activated]="listLink.isActive"
+            ariaCurrentWhenActive="page"
+            (click)="closeNavIfCompact(sidenav)"
+          >
+            <mat-icon matListItemIcon aria-hidden="true">space_dashboard</mat-icon>
+            <span matListItemTitle>Applications</span>
+          </a>
+          @if (permissions.canCreate()) {
+            <a
+              mat-list-item
+              routerLink="/applications/new"
+              routerLinkActive="nav__link--active"
+              #newLink="routerLinkActive"
+              [activated]="newLink.isActive"
+              ariaCurrentWhenActive="page"
+              (click)="closeNavIfCompact(sidenav)"
+            >
+              <mat-icon matListItemIcon aria-hidden="true">add_business</mat-icon>
+              <span matListItemTitle>New application</span>
+            </a>
+          }
+        </mat-nav-list>
+      </nav>
+
+      @if (showDevTools) {
+        <aside class="nav__note" aria-label="Demo environment">
+          <mat-icon aria-hidden="true">science</mat-icon>
+          <p>Demo data runs on an in-app mock server and resets when you reload.</p>
+        </aside>
+      }
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell__content">
+    <mat-toolbar class="shell__toolbar">
+      @if (isCompact()) {
+        <button mat-icon-button type="button" aria-label="Open navigation" (click)="sidenav.open()">
+          <mat-icon aria-hidden="true">menu</mat-icon>
+        </button>
+        <span class="brand__mark brand__mark--sm" aria-hidden="true">
+          <mat-icon>storefront</mat-icon>
+        </span>
+        <span class="shell__brand">Merchant onboarding</span>
+      }
+      <span class="shell__spacer"></span>
+
+      @if (showDevTools) {
+        <button
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="devMenu"
+          aria-label="Developer tools"
+        >
+          <mat-icon aria-hidden="true">build</mat-icon>
+        </button>
+        <mat-menu #devMenu="matMenu" xPosition="before">
+          <button mat-menu-item type="button" (click)="expireToken()">
+            <mat-icon aria-hidden="true">timer_off</mat-icon>
+            <span>Expire access token</span>
+          </button>
+          <button mat-menu-item type="button" (click)="failNextRequests()">
+            <mat-icon aria-hidden="true">error</mat-icon>
+            <span>Fail next 3 requests</span>
+          </button>
+        </mat-menu>
+      }
+
+      @if (user(); as currentUser) {
+        <button type="button" class="user" [matMenuTriggerFor]="userMenu">
+          <app-avatar [name]="currentUser.name" size="md" />
+          <span class="user__text">
+            <span class="user__name">{{ currentUser.name }}</span>
+            <span class="user__role">{{ roleLabel() }}</span>
+          </span>
+          <mat-icon class="user__chevron" aria-hidden="true">expand_more</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" xPosition="before">
+          <div class="user-menu__header" aria-hidden="true">
+            <app-avatar [name]="currentUser.name" size="lg" />
+            <span>
+              <span class="user-menu__name">{{ currentUser.name }}</span>
+              <span class="user-menu__role">{{ roleLabel() }}</span>
+            </span>
+          </div>
+          <button mat-menu-item type="button" (click)="logout()">
+            <mat-icon aria-hidden="true">logout</mat-icon>
+            <span>Sign out</span>
+          </button>
+        </mat-menu>
+      }
+    </mat-toolbar>
+
+    <main #main id="main" class="shell__main" tabindex="-1">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

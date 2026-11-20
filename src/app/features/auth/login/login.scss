@@ -1,0 +1,115 @@
+.login {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+  // Soft brand glow behind the card; purely decorative.
+  background:
+    radial-gradient(
+      60rem 40rem at 10% -10%,
+      color-mix(in srgb, var(--mat-sys-primary) 18%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 36rem at 110% 110%,
+      color-mix(in srgb, var(--app-brand-accent) 14%, transparent),
+      transparent 70%
+    ),
+    var(--app-canvas);
+}
+
+.login__card {
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow: var(--app-shadow-raised);
+}
+
+.login__header {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 32px 24px 8px;
+  text-align: center;
+}
+
+.login__mark {
+  display: grid;
+  place-items: center;
+  inline-size: 52px;
+  block-size: 52px;
+  margin-bottom: 8px;
+  border-radius: 16px;
+  background: var(--app-brand-gradient);
+  color: #ffffff;
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--app-brand) 65%, transparent);
+
+  mat-icon {
+    font-size: 28px;
+    inline-size: 28px;
+    block-size: 28px;
+  }
+}
+
+.login__title {
+  margin: 0;
+  font: var(--mat-sys-headline-small);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.login__subtitle {
+  margin: 0;
+  color: var(--app-muted);
+}
+
+.login__form {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.login__submit {
+  min-height: 48px;
+}
+
+.login__error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}
+
+.login__demo {
+  margin: 24px 0 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+  color: var(--app-muted);
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 4px;
+    font: var(--mat-sys-title-small);
+    color: var(--mat-sys-on-surface);
+
+    mat-icon {
+      font-size: 18px;
+      inline-size: 18px;
+      block-size: 18px;
+      color: var(--mat-sys-primary);
+    }
+  }
+
+  p {
+    margin: 0;
+  }
+
+  code {
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface);
+  }
+}

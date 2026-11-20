@@ -1,0 +1,149 @@
+<header class="page-header">
+  <div class="page-header__text">
+    <p class="page-header__eyebrow">{{ greeting() }}</p>
+    <h1>Applications</h1>
+    @if (scopeDescription(); as description) {
+      <p class="page-header__subtitle">{{ description }}</p>
+    }
+  </div>
+  @if (permissions.canCreate()) {
+    <a mat-flat-button routerLink="/applications/new" class="page-header__cta">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      New application
+    </a>
+  }
+</header>
+
+@if (countCards().length > 0) {
+  <app-status-summary
+    [tiles]="countCards()"
+    [total]="totalCount()"
+    (statusToggle)="onCountCard($event)"
+  />
+}
+
+<section
+  class="panel filters"
+  [class.filters--no-reviewer]="!permissions.canFilterByReviewer()"
+  aria-label="Filters"
+>
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Search</mat-label>
+    <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+    <input matInput type="search" [formControl]="search" placeholder="Merchant name or ID" />
+  </mat-form-field>
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Status</mat-label>
+    <mat-select [value]="query().status" (selectionChange)="onStatusChange($event.value)">
+      <mat-option value="">All statuses</mat-option>
+      @for (status of statuses; track status) {
+        <mat-option [value]="status">{{ statusLabels[status] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (permissions.canFilterByReviewer()) {
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Assigned reviewer</mat-label>
+      <mat-select [value]="query().reviewerId" (selectionChange)="onReviewerChange($event.value)">
+        <mat-option value="">Any reviewer</mat-option>
+        @for (reviewer of reviewerOptions(); track reviewer.id) {
+          <mat-option [value]="reviewer.id">{{ reviewer.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Created between</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input
+        matStartDate
+        placeholder="Start date"
+        [value]="fromDate()"
+        (dateChange)="onFromChange($event)"
+      />
+      <input
+        matEndDate
+        placeholder="End date"
+        [value]="toDate()"
+        (dateChange)="onToChange($event)"
+      />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-date-range-picker #picker />
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-button type="button" class="filters__clear" (click)="clearFilters()">
+      Clear filters
+    </button>
+  }
+</section>
+
+<section
+  class="panel results"
+  aria-labelledby="results-heading"
+  [attr.aria-busy]="applications.isLoading()"
+>
+  <header class="results__header">
+    <h2 id="results-heading" class="results__title">{{ resultsTitle() }}</h2>
+    @if (applications.hasValue()) {
+      @let total = applications.value().total;
+      <p class="results__count tabular-nums" aria-live="polite">
+        {{ total }} {{ total === 1 ? 'application' : 'applications' }}
+      </p>
+    }
+  </header>
+
+  <div class="results__progress">
+    @if (applications.isLoading()) {
+      <mat-progress-bar mode="indeterminate" aria-label="Loading applications" />
+    }
+  </div>
+
+  @if (loadError(); as message) {
+    <div class="results__body">
+      <app-error-state [message]="message" (retry)="retry()" />
+    </div>
+  } @else if (applications.hasValue()) {
+    @let page = applications.value();
+    @if (page.items.length === 0) {
+      <div class="empty-state">
+        <span class="empty-state__art" aria-hidden="true">
+          <mat-icon>{{ hasFilters() ? 'search_off' : 'inbox' }}</mat-icon>
+        </span>
+        <h3 class="empty-state__title">
+          {{ hasFilters() ? 'No matches' : 'Nothing here yet' }}
+        </h3>
+        <p>{{ hasFilters() ? 'No applications match these filters.' : 'No applications yet.' }}</p>
+        @if (hasFilters()) {
+          <button mat-stroked-button type="button" (click)="clearFilters()">Clear filters</button>
+        } @else if (permissions.canCreate()) {
+          <a mat-flat-button routerLink="/applications/new">Start an application</a>
+        }
+      </div>
+    } @else {
+      <app-application-list
+        [applications]="page.items"
+        [compact]="isCompact()"
+        [sort]="query().sort"
+        [direction]="query().direction"
+        (assign)="openAssign($event)"
+        (sortChange)="onSort($event)"
+      />
+      <mat-paginator
+        class="results__paginator"
+        [length]="page.total"
+        [pageIndex]="query().page"
+        [pageSize]="query().size"
+        [pageSizeOptions]="pageSizes"
+        (page)="onPage($event)"
+        aria-label="Select page of applications"
+      />
+    }
+  } @else if (showSkeleton()) {
+    <app-list-skeleton />
+  }
+</section>

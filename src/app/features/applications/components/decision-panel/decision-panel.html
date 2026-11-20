@@ -1,0 +1,39 @@
+<form [formGroup]="form" class="decision" novalidate (submit)="$event.preventDefault()">
+  <fieldset class="decision__risk">
+    <legend id="risk-legend">Risk level <span aria-hidden="true">*</span></legend>
+    <mat-radio-group formControlName="riskLevel" aria-labelledby="risk-legend" aria-required="true">
+      @for (level of riskLevels; track level) {
+        <mat-radio-button [value]="level">{{ riskLabels[level] }}</mat-radio-button>
+      }
+    </mat-radio-group>
+    @if (showRiskLevelError()) {
+      <p class="decision__error" role="alert">Select a risk level.</p>
+    }
+  </fieldset>
+
+  <mat-form-field>
+    <mat-label>Comment</mat-label>
+    <textarea matInput formControlName="comment" rows="3"></textarea>
+    <mat-hint>Required when rejecting.</mat-hint>
+    <mat-error>{{ errors().comment }}</mat-error>
+  </mat-form-field>
+
+  <div aria-live="assertive">
+    @if (error(); as message) {
+      <p class="decision__error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="decision__actions">
+    <button
+      mat-stroked-button
+      type="button"
+      class="decision__reject"
+      [disabled]="saving()"
+      (click)="reject()"
+    >
+      Reject
+    </button>
+    <button mat-flat-button type="button" [disabled]="saving()" (click)="approve()">Approve</button>
+  </div>
+</form>

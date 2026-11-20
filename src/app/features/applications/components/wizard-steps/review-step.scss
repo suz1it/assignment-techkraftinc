@@ -1,0 +1,152 @@
+@use 'breakpoints' as bp;
+
+// ── One card per step ──────────────────────────────────────────────────
+.review-sections {
+  display: grid;
+  gap: 16px;
+}
+
+.review-card {
+  border: 1px solid var(--app-panel-border);
+  border-radius: 14px;
+  background: var(--app-panel);
+  overflow: hidden;
+}
+
+.review-card--error {
+  border-color: color-mix(in srgb, var(--mat-sys-error) 45%, var(--app-panel-border));
+}
+
+.review-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--mat-sys-surface-container-low);
+  border-bottom: 1px solid var(--app-panel-border);
+}
+
+.review-card__number {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background: var(--app-status-approved-bg);
+  color: var(--app-status-approved-fg);
+
+  mat-icon {
+    font-size: 18px;
+    inline-size: 18px;
+    block-size: 18px;
+  }
+}
+
+.review-card--error .review-card__number {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.review-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+    font-weight: 600;
+  }
+}
+
+.review-card__step {
+  display: block;
+  font: var(--mat-sys-label-small);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-muted);
+}
+
+.review-card__badge {
+  padding: 2px 10px;
+  border-radius: var(--mat-sys-corner-full);
+  font: var(--mat-sys-label-medium);
+  font-weight: 600;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--app-muted);
+}
+
+.review-card__badge--ok {
+  background: var(--app-status-approved-bg);
+  color: var(--app-status-approved-fg);
+}
+
+.review-card__badge--error {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.review-card__rows {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0;
+  padding: 4px 0;
+
+  @include bp.from(bp.$tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.review-row {
+  padding: 10px 16px;
+  // Keeps rows the same height whether or not they carry an error accent.
+  border-inline-start: 3px solid transparent;
+
+  dt {
+    font: var(--mat-sys-label-medium);
+    color: var(--app-muted);
+  }
+
+  dd {
+    display: grid;
+    gap: 2px;
+    margin: 2px 0 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.review-row--error {
+  border-inline-start-color: var(--mat-sys-error);
+  background: color-mix(in srgb, var(--mat-sys-error-container) 45%, transparent);
+}
+
+.review-row__value {
+  font: var(--mat-sys-body-large);
+}
+
+.review-row__empty {
+  color: var(--app-muted);
+  font-style: italic;
+}
+
+.review-row__error {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mat-sys-error);
+  font: var(--mat-sys-body-small);
+  font-weight: 500;
+
+  mat-icon {
+    flex: none;
+    font-size: 16px;
+    inline-size: 16px;
+    block-size: 16px;
+  }
+}

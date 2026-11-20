@@ -1,0 +1,128 @@
+@use 'breakpoints' as bp;
+
+// ── Step heading: icon, title and what the step is for ─────────────────
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.step-head__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.step-head__title {
+  margin: 0;
+  font: var(--mat-sys-title-large);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.step-head__description {
+  margin: 2px 0 0;
+  color: var(--app-muted);
+}
+
+.step-head__required {
+  margin: 4px 0 0;
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+// A labelled group of fields inside a step (e.g. "Owner", "Business address").
+.step-section {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--app-panel-border);
+  font: var(--mat-sys-title-small);
+  font-weight: 600;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    inline-size: 20px;
+    block-size: 20px;
+    color: var(--mat-sys-primary);
+  }
+}
+
+// Reassurance / context note next to sensitive fields.
+.step-note {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--app-panel-border);
+  color: var(--app-muted);
+  font: var(--mat-sys-body-small);
+
+  mat-icon {
+    flex: none;
+    font-size: 20px;
+    inline-size: 20px;
+    block-size: 20px;
+    color: var(--mat-sys-primary);
+  }
+}
+
+.step-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px 16px;
+
+  @include bp.from(bp.$tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.step-grid__wide {
+  grid-column: 1 / -1;
+}
+
+.step-error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}
+
+.confirm {
+  margin: 20px 0 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--app-panel-border);
+}
+
+.submit-errors {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: var(--mat-sys-corner-medium);
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+
+  p,
+  ul {
+    margin: 0;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+}

@@ -1,0 +1,186 @@
+<a matButton routerLink="/applications" class="back-link">
+  <mat-icon aria-hidden="true">arrow_back</mat-icon>
+  Applications
+</a>
+
+<header class="wizard-header">
+  <div class="wizard-header__text">
+    <p class="wizard-header__eyebrow">Merchant application · {{ id() }}</p>
+    <h1>{{ draft()?.legalName || 'New application' }}</h1>
+  </div>
+  @if (editor.ready()) {
+    <div
+      class="save-status"
+      aria-live="polite"
+      role="status"
+      [attr.data-state]="editor.saveStatus().state"
+    >
+      @switch (editor.saveStatus().state) {
+        @case ('saving') {
+          <span><mat-icon aria-hidden="true">sync</mat-icon> Saving…</span>
+        }
+        @case ('saved') {
+          <span
+            ><mat-icon aria-hidden="true">cloud_done</mat-icon> Saved
+            {{ editor.savedAt() | date: 'shortTime' }}</span
+          >
+        }
+        @case ('error') {
+          <span class="save-status__error">
+            <mat-icon aria-hidden="true">cloud_off</mat-icon> Couldn’t save
+            <button mat-button type="button" (click)="editor.retrySave()">Retry</button>
+          </span>
+        }
+        @default {
+          <span><mat-icon aria-hidden="true">cloud</mat-icon> Draft · saves automatically</span>
+        }
+      }
+    </div>
+  }
+</header>
+
+@if (application.isLoading() && !editor.ready()) {
+  <mat-progress-bar mode="indeterminate" aria-label="Loading draft" />
+}
+
+@if (notFound()) {
+  <p>This draft doesn't exist, or you don't have access to it.</p>
+  <a mat-stroked-button routerLink="/applications">Back to applications</a>
+} @else if (loadError(); as message) {
+  <app-error-state [message]="message" (retry)="reload()" />
+} @else if (application.hasValue() && !editable()) {
+  <p>This application has been submitted and can no longer be edited.</p>
+  <a mat-stroked-button [routerLink]="['/applications', id()]">View application</a>
+} @else if (editor.ready()) {
+  @let states = editor.stepStates();
+  @let done = editor.progress();
+  <div class="wizard" #panel>
+    <div class="wizard-progress">
+      <p class="wizard-progress__step">
+        <span class="wizard-progress__count"
+          >Step {{ selectedIndex() + 1 }} of {{ totalSteps }}</span
+        >
+        {{ currentStepLabel() }}
+      </p>
+      <p class="wizard-progress__fields tabular-nums">
+        {{ done.done }} of {{ done.total }} required fields complete
+      </p>
+      <mat-progress-bar
+        class="wizard-progress__bar"
+        mode="determinate"
+        [value]="done.percent"
+        aria-label="Required fields complete"
+      />
+    </div>
+
+    <mat-stepper
+      class="wizard-stepper"
+      [orientation]="isCompact() ? 'vertical' : 'horizontal'"
+      (selectionChange)="onStepChange($event)"
+    >
+      <mat-step
+        [stepControl]="form.controls.business"
+        [label]="states[0].label"
+        [completed]="states[0].complete"
+        [hasError]="states[0].showError"
+        [errorMessage]="states[0].errorText"
+      >
+        <div class="step-card">
+          <app-business-step
+            [group]="form.controls.business"
+            [storedTaxId]="editor.storedTaxId()"
+          />
+          <div class="step-actions">
+            <span class="step-actions__position">Step 1 of {{ totalSteps }}</span>
+            <span class="spacer"></span>
+            <button mat-flat-button type="button" matStepperNext>
+              Continue
+              <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [stepControl]="form.controls.contact"
+        [label]="states[1].label"
+        [completed]="states[1].complete"
+        [hasError]="states[1].showError"
+        [errorMessage]="states[1].errorText"
+      >
+        <div class="step-card">
+          <app-contact-step [group]="form.controls.contact" />
+          <div class="step-actions">
+            <span class="step-actions__position">Step 2 of {{ totalSteps }}</span>
+            <span class="spacer"></span>
+            <button matButton="outlined" type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button type="button" matStepperNext>
+              Continue
+              <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <mat-step
+        [stepControl]="form.controls.bank"
+        [label]="states[2].label"
+        [completed]="states[2].complete"
+        [hasError]="states[2].showError"
+        [errorMessage]="states[2].errorText"
+      >
+        <div class="step-card">
+          <app-bank-step
+            [group]="form.controls.bank"
+            [storedAccountNumber]="editor.storedAccountNumber()"
+          />
+          <div class="step-actions">
+            <span class="step-actions__position">Step 3 of {{ totalSteps }}</span>
+            <span class="spacer"></span>
+            <button matButton="outlined" type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button type="button" matStepperNext>
+              Review
+              <mat-icon iconPositionEnd aria-hidden="true">arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <mat-step [stepControl]="form.controls.review" label="Review & submit">
+        <div class="step-card">
+          <app-review-step
+            [form]="form"
+            [storedTaxId]="editor.storedTaxId()"
+            [storedAccountNumber]="editor.storedAccountNumber()"
+            [submitErrors]="editor.submitErrors()"
+            (editStep)="goToStep($event)"
+          />
+          <div aria-live="assertive">
+            @if (editor.actionError(); as message) {
+              <p class="action-error">
+                <mat-icon aria-hidden="true">error</mat-icon>
+                {{ message }}
+              </p>
+            }
+          </div>
+          <div class="step-actions">
+            <button matButton type="button" class="discard" (click)="discard()">
+              Discard draft
+            </button>
+            <span class="spacer"></span>
+            <button matButton="outlined" type="button" matStepperPrevious>Back</button>
+            <button
+              mat-flat-button
+              type="button"
+              class="submit"
+              [disabled]="editor.submitting()"
+              (click)="submit()"
+            >
+              {{ editor.submitting() ? 'Submitting…' : 'Submit application' }}
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+}

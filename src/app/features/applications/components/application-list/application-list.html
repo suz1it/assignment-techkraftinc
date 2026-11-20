@@ -1,0 +1,131 @@
+@if (compact()) {
+  <ul class="cards">
+    @for (row of rows(); track row.app.id) {
+      <li class="card">
+        <div class="card__head">
+          <app-avatar [name]="row.displayName" />
+          <div class="card__title">
+            <a class="merchant__link" [routerLink]="['/applications', row.app.id]">{{
+              row.displayName
+            }}</a>
+            <span class="merchant__id">{{ row.app.id }}</span>
+          </div>
+          <app-status-chip [status]="row.app.status" />
+        </div>
+
+        <dl class="card__meta">
+          <div>
+            <dt>Reviewer</dt>
+            <dd>
+              @if (row.app.assignedReviewer; as reviewer) {
+                {{ reviewer.name }}
+              } @else {
+                <span class="muted">Unassigned</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Created</dt>
+            <dd>{{ row.app.createdAt | date: 'mediumDate' }}</dd>
+          </div>
+        </dl>
+
+        @if (row.canResume || row.canAssign) {
+          <div class="card__actions">
+            @if (row.canResume) {
+              <a matButton="outlined" [routerLink]="['/applications', row.app.id, 'edit']"
+                >Resume</a
+              >
+            }
+            @if (row.canAssign) {
+              <button matButton="tonal" type="button" (click)="assign.emit(row.app)">Assign</button>
+            }
+          </div>
+        }
+      </li>
+    }
+  </ul>
+} @else {
+  <table
+    mat-table
+    matSort
+    [dataSource]="rows()"
+    [matSortActive]="sort()"
+    [matSortDirection]="direction()"
+    matSortDisableClear
+    (matSortChange)="sortChange.emit($event)"
+    class="table"
+  >
+    <caption class="visually-hidden">
+      Merchant applications
+    </caption>
+
+    <ng-container matColumnDef="legalName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">Merchant</th>
+      <td mat-cell *matCellDef="let row">
+        <div class="merchant">
+          <app-avatar [name]="row.displayName" />
+          <div class="merchant__text">
+            <a class="merchant__link" [routerLink]="['/applications', row.app.id]">{{
+              row.displayName
+            }}</a>
+            <span class="merchant__id">{{ row.app.id }}</span>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">Status</th>
+      <td mat-cell *matCellDef="let row"><app-status-chip [status]="row.app.status" /></td>
+    </ng-container>
+
+    <ng-container matColumnDef="reviewer">
+      <th mat-header-cell *matHeaderCellDef scope="col">Reviewer</th>
+      <td mat-cell *matCellDef="let row">
+        @if (row.app.assignedReviewer; as reviewer) {
+          <span class="person">
+            <app-avatar [name]="reviewer.name" size="sm" />
+            {{ reviewer.name }}
+          </span>
+        } @else {
+          <span class="muted">Unassigned</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">Created</th>
+      <td mat-cell *matCellDef="let row" class="tabular-nums">
+        {{ row.app.createdAt | date: 'mediumDate' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updatedAt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">Last updated</th>
+      <td mat-cell *matCellDef="let row" class="tabular-nums">
+        <span class="date">
+          {{ row.app.updatedAt | date: 'mediumDate' }}
+          <span class="date__time">{{ row.app.updatedAt | date: 'shortTime' }}</span>
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef scope="col">
+        <span class="visually-hidden">Actions</span>
+      </th>
+      <td mat-cell *matCellDef="let row" class="table__actions">
+        @if (row.canResume) {
+          <a matButton="outlined" [routerLink]="['/applications', row.app.id, 'edit']">Resume</a>
+        }
+        @if (row.canAssign) {
+          <button matButton="tonal" type="button" (click)="assign.emit(row.app)">Assign</button>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" class="table__row"></tr>
+  </table>
+}

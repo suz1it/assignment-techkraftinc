@@ -1,0 +1,57 @@
+<header class="step-head">
+  <span class="step-head__icon" aria-hidden="true"><mat-icon>account_balance</mat-icon></span>
+  <div>
+    <h2 class="step-head__title">Bank & payout</h2>
+    <p class="step-head__description">Where settlements are paid.</p>
+    <p class="step-head__required">Fields marked * are required.</p>
+  </div>
+</header>
+
+<div class="step-grid" [formGroup]="group()">
+  <p class="step-note">
+    <mat-icon aria-hidden="true">shield_lock</mat-icon>
+    Once saved, the account number is only ever shown masked. Only reviewers and admins can reveal
+    it, and every reveal is recorded in the application's history.
+  </p>
+  <mat-form-field class="step-grid__wide">
+    <mat-label>Account holder name</mat-label>
+    <input matInput formControlName="accountHolderName" autocomplete="off" required />
+    <mat-error>{{ errors().accountHolderName }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Account number</mat-label>
+    <input
+      matInput
+      formControlName="accountNumber"
+      inputmode="numeric"
+      autocomplete="off"
+      spellcheck="false"
+      [required]="!storedAccountNumber()"
+    />
+    @if (storedAccountNumber(); as stored) {
+      <mat-hint>Saved as {{ stored }}. Leave blank to keep it.</mat-hint>
+    }
+    <mat-error>{{ errors().accountNumber }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Confirm account number</mat-label>
+    <input
+      matInput
+      formControlName="confirmAccountNumber"
+      inputmode="numeric"
+      autocomplete="off"
+      spellcheck="false"
+      [errorStateMatcher]="confirmationMatcher"
+    />
+    <mat-hint>Required when entering a new account number. Never saved.</mat-hint>
+    <mat-error>{{ errors().$group ?? errors().confirmAccountNumber }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>IFSC / routing code</mat-label>
+    <input matInput formControlName="routingCode" autocomplete="off" spellcheck="false" required />
+    <mat-error>{{ errors().routingCode }}</mat-error>
+  </mat-form-field>
+</div>

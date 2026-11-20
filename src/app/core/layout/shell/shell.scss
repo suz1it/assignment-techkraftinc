@@ -1,0 +1,258 @@
+@use '@angular/material' as mat;
+@use 'breakpoints' as bp;
+
+.shell {
+  height: 100dvh;
+}
+
+.shell__nav {
+  width: 264px;
+
+  // Light-on-navy nav items. Muted at rest, white on hover/focus/active.
+  @include mat.list-overrides(
+    (
+      list-item-label-text-color: var(--app-sidebar-muted),
+      list-item-leading-icon-color: var(--app-sidebar-muted),
+      list-item-hover-label-text-color: var(--app-sidebar-fg),
+      list-item-hover-state-layer-color: var(--app-sidebar-fg),
+      list-item-hover-state-layer-opacity: 0.06,
+      list-item-focus-label-text-color: var(--app-sidebar-fg),
+      list-item-focus-state-layer-color: var(--app-sidebar-fg),
+      list-item-focus-state-layer-opacity: 0.1,
+      active-indicator-color: var(--app-sidebar-active),
+    )
+  );
+}
+
+.nav__link--active {
+  @include mat.list-overrides(
+    (
+      list-item-label-text-color: var(--app-sidebar-fg),
+      list-item-leading-icon-color: var(--app-sidebar-fg),
+    )
+  );
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100%;
+  padding: 16px 12px;
+  box-sizing: border-box;
+}
+
+// ── Brand ──────────────────────────────────────────────────────────────
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 20px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--app-sidebar-border);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 12px;
+  background: var(--app-brand-gradient);
+  color: #ffffff;
+  box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--app-brand) 60%, transparent);
+
+  mat-icon {
+    font-size: 22px;
+    inline-size: 22px;
+    block-size: 22px;
+  }
+}
+
+.brand__mark--sm {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 10px;
+
+  mat-icon {
+    font-size: 18px;
+    inline-size: 18px;
+    block-size: 18px;
+  }
+}
+
+.brand__text {
+  display: grid;
+  min-width: 0;
+}
+
+.brand__name {
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.brand__tagline {
+  font: var(--mat-sys-body-small);
+  color: var(--app-sidebar-muted);
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────
+.nav__section {
+  display: grid;
+  gap: 4px;
+}
+
+.nav__heading {
+  margin: 0;
+  padding: 0 16px 4px;
+  font: var(--mat-sys-label-small);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--app-sidebar-muted);
+}
+
+.nav__note {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--app-sidebar-border);
+  background: var(--app-sidebar-subtle);
+  color: var(--app-sidebar-muted);
+  font: var(--mat-sys-body-small);
+
+  mat-icon {
+    flex: none;
+    font-size: 18px;
+    inline-size: 18px;
+    block-size: 18px;
+    color: var(--app-brand-accent);
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+// ── Top bar ────────────────────────────────────────────────────────────
+.shell__toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  gap: 8px;
+  padding-inline: 12px;
+  background: color-mix(in srgb, var(--app-panel) 85%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--app-panel-border);
+
+  @include bp.from(bp.$tablet) {
+    padding-inline: 24px;
+  }
+}
+
+.shell__brand {
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shell__spacer {
+  flex: 1;
+}
+
+// ── User menu trigger ──────────────────────────────────────────────────
+.user {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 8px 4px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--mat-sys-corner-full);
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+
+  &:hover {
+    background: var(--mat-sys-surface-container);
+    border-color: var(--app-panel-border);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.user__text {
+  display: none;
+  text-align: left;
+  line-height: 1.2;
+
+  @include bp.from(bp.$tablet) {
+    display: grid;
+  }
+}
+
+.user__name {
+  font: var(--mat-sys-label-large);
+  font-weight: 600;
+}
+
+.user__role {
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+.user__chevron {
+  color: var(--app-muted);
+}
+
+.user-menu__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  margin-bottom: 4px;
+
+  > span {
+    display: grid;
+  }
+}
+
+.user-menu__name {
+  font: var(--mat-sys-title-small);
+}
+
+.user-menu__role {
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+// ── Page area ──────────────────────────────────────────────────────────
+.shell__main {
+  padding: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  outline: none;
+
+  @include bp.from(bp.$tablet) {
+    padding: 24px;
+  }
+
+  @include bp.from(bp.$wide) {
+    padding: 32px 40px;
+  }
+}

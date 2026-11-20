@@ -1,0 +1,20 @@
+// Mobile-first breakpoints, aligned with Angular CDK `Breakpoints` (Small 600px, Medium 960px, Large 1280px).
+// Usage in a component stylesheet:
+//   @use 'breakpoints' as bp;
+//   .grid { @include bp.from(bp.$tablet) { grid-template-columns: repeat(2, 1fr); } }
+
+$tablet: 600px;
+$desktop: 960px;
+$wide: 1280px;
+
+@mixin from($min) {
+  @media (min-width: $min) {
+    @content;
+  }
+}
+
+@mixin below($max) {
+  @media (max-width: ($max - 0.02px)) {
+    @content;
+  }
+}

@@ -1,0 +1,96 @@
+<header class="step-head">
+  <span class="step-head__icon" aria-hidden="true"><mat-icon>fact_check</mat-icon></span>
+  <div>
+    <h2 class="step-head__title">Review & submit</h2>
+    <p class="step-head__description">
+      Check every detail before sending the application for risk review.
+    </p>
+  </div>
+</header>
+
+<div class="review-sections">
+  @for (section of sections(); track section.key) {
+    <section
+      class="review-card"
+      [class.review-card--error]="section.issues.length > 0"
+      [attr.aria-labelledby]="section.headingId"
+    >
+      <header class="review-card__head">
+        <span class="review-card__number" aria-hidden="true">
+          @if (section.issues.length > 0) {
+            <mat-icon>priority_high</mat-icon>
+          } @else {
+            <mat-icon>check</mat-icon>
+          }
+        </span>
+        <div class="review-card__heading">
+          <h3 [id]="section.headingId">
+            <span class="review-card__step">Step {{ section.index + 1 }}</span>
+            {{ section.title }}
+          </h3>
+          @if (section.issues.length > 0) {
+            <span class="review-card__badge review-card__badge--error">
+              {{ section.issues.length }} to fix
+            </span>
+          } @else if (section.pending) {
+            <span class="review-card__badge">Checking…</span>
+          } @else {
+            <span class="review-card__badge review-card__badge--ok">Complete</span>
+          }
+        </div>
+        <button
+          matButton="outlined"
+          type="button"
+          class="review-card__edit"
+          [attr.aria-label]="section.editLabel"
+          (click)="editStep.emit(section.index)"
+        >
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          Edit
+        </button>
+      </header>
+
+      <dl class="review-card__rows">
+        @for (row of section.rows; track row.field) {
+          <div class="review-row" [class.review-row--error]="row.error">
+            <dt>{{ row.label }}</dt>
+            <dd>
+              @if (row.value) {
+                <span class="review-row__value">{{ row.value }}</span>
+              } @else {
+                <span class="review-row__empty">Not provided</span>
+              }
+              @if (row.error; as message) {
+                <span class="review-row__error">
+                  <mat-icon aria-hidden="true">error</mat-icon>{{ message }}
+                </span>
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+</div>
+
+<div [formGroup]="form().controls.review" class="confirm">
+  <mat-checkbox formControlName="confirmed" aria-describedby="confirm-error">
+    I confirm the information is accurate.
+  </mat-checkbox>
+  <div id="confirm-error" aria-live="polite">
+    @if (confirmError()) {
+      <p class="step-error">Please confirm to submit.</p>
+    }
+  </div>
+</div>
+
+@if (submitErrors().length > 0) {
+  <div class="submit-errors" role="alert">
+    <p>The application couldn't be submitted:</p>
+    <ul>
+      @for (message of submitErrors(); track message) {
+        <li>{{ message }}</li>
+      }
+    </ul>
+  </div>
+}

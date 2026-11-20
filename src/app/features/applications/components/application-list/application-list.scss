@@ -1,0 +1,156 @@
+// ── Table (≥ 960px) ────────────────────────────────────────────────────
+.table {
+  width: 100%;
+
+  th:first-child,
+  td:first-child {
+    padding-inline-start: 24px;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-inline-end: 24px;
+  }
+}
+
+.table__row {
+  transition: background-color 120ms ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--mat-sys-primary) 4%, transparent);
+  }
+
+  &:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.table__actions {
+  text-align: right;
+  white-space: nowrap;
+
+  > * + * {
+    margin-inline-start: 8px;
+  }
+}
+
+// ── Cells ──────────────────────────────────────────────────────────────
+.merchant {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.merchant__text {
+  display: grid;
+  min-width: 0;
+}
+
+.merchant__link {
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-title-small);
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 4px;
+
+  &:hover {
+    color: var(--mat-sys-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.merchant__id {
+  font: var(--mat-sys-body-small);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  color: var(--app-muted);
+}
+
+.person {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.muted {
+  color: var(--app-muted);
+  font-style: italic;
+}
+
+.date {
+  display: grid;
+}
+
+.date__time {
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+// ── Cards (< 960px) ────────────────────────────────────────────────────
+.cards {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0 16px 16px;
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--app-panel-border);
+  border-radius: 14px;
+  background: var(--app-panel);
+}
+
+.card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card__title {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.card__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--mat-sys-surface-container-low);
+
+  dt {
+    font: var(--mat-sys-label-small);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--app-muted);
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font: var(--mat-sys-body-medium);
+  }
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -1,0 +1,183 @@
+@use '@angular/material' as mat;
+@use 'breakpoints' as bp;
+
+:host {
+  display: grid;
+  gap: 16px;
+
+  @include bp.from(bp.$desktop) {
+    gap: 24px;
+  }
+}
+
+// Shared raised surface for the filter bar and the results table.
+.panel {
+  border: 1px solid var(--app-panel-border);
+  border-radius: var(--app-panel-radius);
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow-panel);
+}
+
+// ── Page header ────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-medium);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+.page-header__text {
+  display: grid;
+  gap: 4px;
+  max-width: 64ch;
+}
+
+.page-header__eyebrow {
+  margin: 0;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-primary);
+}
+
+.page-header__subtitle {
+  margin: 0;
+  font: var(--mat-sys-body-large);
+  color: var(--app-muted);
+}
+
+.page-header__cta {
+  min-height: 44px;
+  padding-inline: 20px;
+}
+
+// ── Filter bar ─────────────────────────────────────────────────────────
+// Compact filter bar: Material's density scale (40px fields) and tight spacing, so the table keeps
+// the vertical space. Scoped to the bar; the rest of the app keeps default density.
+.filters {
+  @include mat.form-field-density(-4);
+  @include mat.icon-button-density(-2);
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+
+  @include bp.from(bp.$tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include bp.from(bp.$desktop) {
+    grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr)) minmax(0, 1.3fr) auto;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+}
+
+// Without the reviewer filter (non-admins) the desktop row has one column fewer.
+.filters--no-reviewer {
+  @include bp.from(bp.$desktop) {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.3fr) auto;
+  }
+}
+
+.filters__clear {
+  justify-self: start;
+}
+
+// ── Results panel ──────────────────────────────────────────────────────
+.results {
+  display: grid;
+  overflow: hidden;
+}
+
+.results__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 16px 16px 12px;
+
+  @include bp.from(bp.$tablet) {
+    padding: 20px 24px 12px;
+  }
+}
+
+.results__title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
+}
+
+.results__count {
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: var(--mat-sys-corner-full);
+  background: var(--mat-sys-surface-container-high);
+  color: var(--app-muted);
+  font: var(--mat-sys-label-medium);
+}
+
+// Reserves the bar's height so the table doesn't jump when loading starts and stops.
+.results__progress {
+  block-size: 4px;
+}
+
+.results__body {
+  padding: 16px;
+
+  @include bp.from(bp.$tablet) {
+    padding: 16px 24px 24px;
+  }
+}
+
+.results__paginator {
+  border-top: 1px solid var(--app-panel-border);
+}
+
+// ── Empty state ────────────────────────────────────────────────────────
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 48px 16px 56px;
+  text-align: center;
+  color: var(--app-muted);
+
+  p {
+    margin: 0 0 8px;
+  }
+}
+
+.empty-state__art {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--mat-sys-primary-container) 40%, transparent);
+
+  mat-icon {
+    font-size: 32px;
+    inline-size: 32px;
+    block-size: 32px;
+  }
+}
+
+.empty-state__title {
+  margin: 0;
+  font: var(--mat-sys-title-medium);
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}

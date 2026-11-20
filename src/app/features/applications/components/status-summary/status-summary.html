@@ -1,0 +1,33 @@
+@for (tile of tiles(); track tile.status) {
+  <button
+    type="button"
+    class="count-card"
+    [class.count-card--active]="tile.active"
+    [attr.data-status]="tile.status"
+    [attr.aria-pressed]="tile.active"
+    [attr.aria-label]="tile.ariaLabel"
+    (click)="statusToggle.emit(tile.status)"
+  >
+    <span class="count-card__icon">
+      @if (tile.active) {
+        <mat-icon aria-hidden="true">filter_alt</mat-icon>
+      } @else {
+        <mat-icon aria-hidden="true">{{ tile.icon }}</mat-icon>
+      }
+    </span>
+    <span class="count-card__text">
+      <span class="count-card__label">{{ tile.label }}</span>
+      <span class="count-card__share">
+        @if (tile.active) {
+          Filter on · click to clear
+        } @else {
+          {{ tile.share }}% of {{ total() }}
+        }
+      </span>
+    </span>
+    <span class="count-card__value tabular-nums">{{ tile.count }}</span>
+    <span class="count-card__meter" aria-hidden="true">
+      <span class="count-card__meter-fill" [style.inline-size.%]="tile.share"></span>
+    </span>
+  </button>
+}

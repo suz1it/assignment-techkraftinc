@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Assign reviewer</h2>
+<mat-dialog-content>
+  @if (saving() || reviewers.isLoading()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Loading" />
+  }
+  <p>{{ data.applicationId }} · {{ data.legalName }}</p>
+
+  @if (reviewers.error()) {
+    <p class="dialog-error" role="alert">Couldn't load reviewers.</p>
+  } @else {
+    <mat-form-field class="full-width">
+      <mat-label>Reviewer</mat-label>
+      <mat-select
+        [value]="selectedReviewerId()"
+        (selectionChange)="selectedReviewerId.set($event.value)"
+      >
+        @for (reviewer of reviewers.value() ?? []; track reviewer.id) {
+          <mat-option [value]="reviewer.id">{{ reviewer.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  <div aria-live="assertive">
+    @if (error(); as message) {
+      <p class="dialog-error">{{ message }}</p>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+  @if (data.currentReviewer) {
+    <button mat-button type="button" [disabled]="saving()" (click)="unassign()">Unassign</button>
+  }
+  <button
+    mat-flat-button
+    type="button"
+    [disabled]="
+      saving() || !selectedReviewerId() || selectedReviewerId() === data.currentReviewer?.id
+    "
+    (click)="assign()"
+  >
+    {{ data.currentReviewer ? 'Reassign' : 'Assign' }}
+  </button>
+</mat-dialog-actions>

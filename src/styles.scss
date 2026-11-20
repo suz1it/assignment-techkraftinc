@@ -1,0 +1,186 @@
+// Material 3 theme + app-level design tokens. Everything visual reads from `--mat-sys-*` or the
+// `--app-*` tokens below, so light and dark mode come from one place.
+// Theming guide: https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use 'utilities';
+
+html {
+  height: 100%;
+  // Follow the user's OS preference; every token below has a light and a dark value.
+  color-scheme: light dark;
+
+  // Base M3 theme for typography, shape and every token not overridden below.
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$violet-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: (
+        plain-family: 'Inter, Roboto, system-ui, sans-serif',
+        brand-family: 'Inter, Roboto, system-ui, sans-serif',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  // ── Brand palette ──────────────────────────────────────────────────
+  // Fintech-style: electric indigo for actions, midnight navy ink, cool off-white canvas,
+  // cyan as a decorative accent. Exact hex values need system-token overrides because
+  // Material's built-in palettes are generated. Light values first, dark values second.
+  // Text pairs are chosen for WCAG AA (≥ 4.5:1) on their intended surface.
+  @include mat.theme-overrides(
+    (
+      primary: light-dark(#635bff, #8f88ff),
+      on-primary: light-dark(#ffffff, #14104d),
+      primary-container: light-dark(#eeedff, #2a2670),
+      on-primary-container: light-dark(#2b2785, #e1dfff),
+      secondary-container: light-dark(#e8eef6, #22314a),
+      on-secondary-container: light-dark(#0a2540, #d7e2f0),
+      tertiary: light-dark(#0087ad, #5bdcff),
+      on-tertiary: light-dark(#ffffff, #00303d),
+      tertiary-container: light-dark(#ddf7ff, #00465a),
+      on-tertiary-container: light-dark(#00374a, #c8f3ff),
+      error: light-dark(#c0123c, #ff8fa3),
+      on-error: light-dark(#ffffff, #4a0f20),
+      error-container: light-dark(#fff0f3, #4a0f20),
+      on-error-container: light-dark(#8a0a2e, #ffd9e0),
+      background: light-dark(#f6f9fc, #0a1626),
+      on-background: light-dark(#0a2540, #e6edf5),
+      surface: light-dark(#ffffff, #0d1b2e),
+      on-surface: light-dark(#0a2540, #e6edf5),
+      on-surface-variant: light-dark(#425466, #a9b8ca),
+      surface-container-lowest: light-dark(#ffffff, #08121f),
+      surface-container-low: light-dark(#f6f9fc, #101f33),
+      surface-container: light-dark(#eef2f7, #15263d),
+      surface-container-high: light-dark(#e6ecf2, #1b2e47),
+      surface-container-highest: light-dark(#dce3eb, #223652),
+      outline: light-dark(#8792a2, #6b7c93),
+      outline-variant: light-dark(#e3e8ee, #26394f),
+    )
+  );
+
+  // Brand accents used outside Material components.
+  --app-brand: #635bff;
+  --app-brand-accent: #00d4ff;
+  --app-brand-gradient: linear-gradient(135deg, #635bff 0%, #7a5cff 45%, #00b8e6 100%);
+
+  // Dark navy sidebar in both modes; slightly deeper in dark mode so it still separates from the canvas.
+  --app-sidebar-bg: light-dark(#0a2540, #07111f);
+  --app-sidebar-fg: #ffffff;
+  --app-sidebar-muted: #a3b5cc;
+  --app-sidebar-subtle: rgb(255 255 255 / 0.06);
+  --app-sidebar-border: rgb(255 255 255 / 0.08);
+  --app-sidebar-active: rgb(99 91 255 / 0.32);
+
+  // Page canvas vs. raised panels. Light: cool off-white canvas, white panels. Dark: panels lift above the canvas.
+  --app-canvas: light-dark(var(--mat-sys-surface-container-low), var(--mat-sys-surface));
+  --app-panel: light-dark(
+    var(--mat-sys-surface-container-lowest),
+    var(--mat-sys-surface-container)
+  );
+  --app-panel-border: var(--mat-sys-outline-variant);
+  --app-panel-radius: 16px;
+  // light-dark() only accepts colours, so it switches the shadow colour, not the whole shadow.
+  --app-shadow-panel:
+    0 1px 2px light-dark(rgb(10 37 64 / 0.05), transparent),
+    0 1px 3px light-dark(rgb(10 37 64 / 0.07), transparent);
+  --app-shadow-raised: 0 12px 28px -8px light-dark(rgb(10 37 64 / 0.18), rgb(0 0 0 / 0.55));
+  --app-muted: var(--mat-sys-on-surface-variant);
+
+  // Semantic status colours. fg/bg pairs meet WCAG AA (≥ 4.5:1); `accent` is decorative only
+  // (dots, meters) and always sits next to a text label.
+  --app-status-draft-fg: light-dark(#425466, #c1ccd9);
+  --app-status-draft-bg: light-dark(#eef2f7, #1b2a3f);
+  --app-status-draft-accent: #8792a2;
+  --app-status-submitted-fg: light-dark(#a3470b, #fcc96b);
+  --app-status-submitted-bg: light-dark(#fff8eb, #3b2a0d);
+  --app-status-submitted-accent: #f5a524;
+  --app-status-approved-fg: light-dark(#2f6b1f, #a6db7f);
+  --app-status-approved-bg: light-dark(#eef7e8, #1a3313);
+  --app-status-approved-accent: #5e8e3e;
+  --app-status-rejected-fg: light-dark(#b3093c, #ff9db0);
+  --app-status-rejected-bg: light-dark(#fff0f3, #3d0f1c);
+  --app-status-rejected-accent: #df1b41;
+
+  // Material component tweaks that make tables, paginators and cards sit cleanly on panels.
+  @include mat.table-overrides(
+    (
+      background-color: transparent,
+      header-headline-color: var(--mat-sys-on-surface-variant),
+      header-headline-font: var(--mat-sys-label-large-font),
+      header-headline-weight: 600,
+      header-container-height: 48px,
+      row-item-container-height: 64px,
+      row-item-outline-color: var(--mat-sys-outline-variant),
+    )
+  );
+  @include mat.paginator-overrides(
+    (
+      container-background-color: transparent,
+    )
+  );
+  // Outlined form fields (inputs, selects, date pickers): softer rounded shape, a calm hover and a
+  // clear brand-coloured focus ring. The resting border stays >= 3:1 against panels and the canvas
+  // in both themes (WCAG 1.4.11), so fields remain identifiable.
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 10px,
+      outlined-outline-width: 1px,
+      outlined-focus-outline-width: 2px,
+      outlined-outline-color: light-dark(#7f8a9b, #6f819b),
+      outlined-hover-outline-color: light-dark(#5b6b80, #9aabc2),
+      outlined-focus-outline-color: var(--mat-sys-primary),
+      outlined-disabled-outline-color: var(--mat-sys-outline-variant),
+      outlined-label-text-color: var(--mat-sys-on-surface-variant),
+      outlined-hover-label-text-color: var(--mat-sys-on-surface),
+      outlined-focus-label-text-color: var(--mat-sys-primary),
+      outlined-input-text-placeholder-color: var(--mat-sys-on-surface-variant),
+      outlined-caret-color: var(--mat-sys-primary),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-color: var(--app-panel),
+      outlined-container-shape: var(--app-panel-radius),
+      outlined-outline-color: var(--app-panel-border),
+    )
+  );
+  @include mat.sidenav-overrides(
+    (
+      container-shape: 0,
+      container-background-color: var(--app-sidebar-bg),
+      container-text-color: var(--app-sidebar-fg),
+      container-divider-color: transparent,
+      content-background-color: var(--app-canvas),
+    )
+  );
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: transparent,
+    )
+  );
+  @include mat.list-overrides(
+    (
+      active-indicator-shape: 12px,
+    )
+  );
+}
+
+body {
+  background-color: var(--app-canvas);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  height: 100%;
+}
+
+// Numbers in tables and KPIs line up when they use fixed-width digits.
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

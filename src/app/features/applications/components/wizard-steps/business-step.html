@@ -1,0 +1,86 @@
+<header class="step-head">
+  <span class="step-head__icon" aria-hidden="true"><mat-icon>storefront</mat-icon></span>
+  <div>
+    <h2 class="step-head__title">Business details</h2>
+    <p class="step-head__description">
+      Who the merchant is: legal identity, tax ID and expected volume.
+    </p>
+    <p class="step-head__required">Fields marked * are required.</p>
+  </div>
+</header>
+
+<div class="step-grid" [formGroup]="group()">
+  <mat-form-field>
+    <mat-label>Legal name</mat-label>
+    <input matInput formControlName="legalName" autocomplete="organization" required />
+    <mat-error>{{ errors().legalName }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Trading name</mat-label>
+    <input matInput formControlName="tradingName" />
+    <mat-hint>Optional</mat-hint>
+    <mat-error>{{ errors().tradingName }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Business type</mat-label>
+    <mat-select formControlName="businessType" required>
+      @for (type of businessTypes; track type) {
+        <mat-option [value]="type">{{ businessTypeLabels[type] }}</mat-option>
+      }
+    </mat-select>
+    <mat-error>{{ errors().businessType }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Tax ID (PAN / EIN)</mat-label>
+    <input
+      matInput
+      formControlName="taxId"
+      autocomplete="off"
+      spellcheck="false"
+      [required]="!storedTaxId()"
+    />
+    @if (checkingTaxId()) {
+      <mat-hint>Checking this tax ID…</mat-hint>
+    } @else if (storedTaxId(); as stored) {
+      <mat-hint>Saved as {{ stored }}. Leave blank to keep it, or type a new one.</mat-hint>
+    }
+    <mat-error>{{ errors().taxId }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Registration date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="registrationPicker"
+      [max]="today"
+      formControlName="registrationDate"
+      required
+    />
+    <mat-datepicker-toggle matIconSuffix [for]="registrationPicker" />
+    <mat-datepicker #registrationPicker />
+    <mat-error>{{ errors().registrationDate }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Website</mat-label>
+    <input matInput type="url" formControlName="website" autocomplete="url" />
+    <mat-hint>Optional</mat-hint>
+    <mat-error>{{ errors().website }}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Estimated monthly volume</mat-label>
+    <input
+      matInput
+      type="number"
+      min="1"
+      inputmode="numeric"
+      formControlName="monthlyVolume"
+      required
+    />
+    <mat-error>{{ errors().monthlyVolume }}</mat-error>
+  </mat-form-field>
+</div>

@@ -1,0 +1,160 @@
+@use 'breakpoints' as bp;
+
+// ── Compact status tiles (counts that double as quick filters) ────────
+// One row per tile (icon · label/share · count) so the table below gets the vertical space.
+:host {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  @include bp.from(bp.$tablet) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+.count-card {
+  // Each status supplies its own accent; see the data-status rules below.
+  --tile-accent: var(--app-status-draft-accent);
+  --tile-fg: var(--app-status-draft-fg);
+  --tile-bg: var(--app-status-draft-bg);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 52px;
+  padding: 8px 12px 10px;
+  border: 1px solid var(--app-panel-border);
+  border-radius: 12px;
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow-panel);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+
+  // Hover stays neutral: status colour lives only in the icon badge and the share bar.
+  &:hover {
+    background: var(--mat-sys-surface-container-low);
+    border-color: color-mix(in srgb, var(--mat-sys-outline) 45%, var(--app-panel-border));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+
+  &[data-status='SUBMITTED'] {
+    --tile-accent: var(--app-status-submitted-accent);
+    --tile-fg: var(--app-status-submitted-fg);
+    --tile-bg: var(--app-status-submitted-bg);
+  }
+
+  &[data-status='APPROVED'] {
+    --tile-accent: var(--app-status-approved-accent);
+    --tile-fg: var(--app-status-approved-fg);
+    --tile-bg: var(--app-status-approved-bg);
+  }
+
+  &[data-status='REJECTED'] {
+    --tile-accent: var(--app-status-rejected-accent);
+    --tile-fg: var(--app-status-rejected-fg);
+    --tile-bg: var(--app-status-rejected-bg);
+  }
+}
+
+// Selected tile: one brand-coloured treatment for every status (soft tint + soft brand border),
+// never a saturated status-colour outline. The icon turns into a filter icon and the caption says
+// how to undo it, so the state never relies on colour alone.
+.count-card--active {
+  border-color: color-mix(in srgb, var(--mat-sys-primary) 55%, var(--app-panel-border));
+  background: color-mix(in srgb, var(--mat-sys-primary) 7%, var(--app-panel));
+
+  &:hover {
+    background: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--app-panel));
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 65%, var(--app-panel-border));
+  }
+}
+
+.count-card__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 8px;
+  background: var(--tile-bg);
+  color: var(--tile-fg);
+
+  mat-icon {
+    font-size: 18px;
+    inline-size: 18px;
+    block-size: 18px;
+  }
+}
+
+.count-card--active .count-card__icon {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.count-card__text {
+  display: grid;
+  min-inline-size: 0;
+  line-height: 1.2;
+}
+
+.count-card__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--mat-sys-label-large);
+  font-weight: 600;
+}
+
+// The label stays in body colour: brand violet on the tint is 4.3:1 in light mode (below AA).
+.count-card--active .count-card__label {
+  color: var(--mat-sys-on-surface);
+}
+
+.count-card__share {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+.count-card--active .count-card__share {
+  color: var(--mat-sys-on-surface);
+  font-weight: 500;
+}
+
+.count-card__value {
+  font: var(--mat-sys-title-large);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+// Share of the total, as a thin bar along the bottom edge (decorative; the text carries the value).
+.count-card__meter {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: 3px;
+  background: color-mix(in srgb, var(--mat-sys-outline-variant) 60%, transparent);
+}
+
+.count-card__meter-fill {
+  display: block;
+  block-size: 100%;
+  background: color-mix(in srgb, var(--tile-accent) 75%, transparent);
+  transition: inline-size 400ms ease;
+}

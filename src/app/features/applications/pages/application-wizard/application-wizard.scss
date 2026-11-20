@@ -1,0 +1,218 @@
+@use '@angular/material' as mat;
+@use 'breakpoints' as bp;
+
+:host {
+  display: grid;
+  gap: 16px;
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.back-link {
+  justify-self: start;
+  margin-inline-start: -12px;
+}
+
+// ── Header ─────────────────────────────────────────────────────────────
+.wizard-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 16px;
+
+  h1 {
+    margin: 0;
+    font: var(--mat-sys-headline-medium);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+}
+
+.wizard-header__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wizard-header__eyebrow {
+  margin: 0;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-primary);
+}
+
+// Save state as a pill: neutral while idle/saving, green once saved, red when a save fails.
+.save-status {
+  --pill-fg: var(--app-muted);
+  --pill-bg: var(--mat-sys-surface-container);
+
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--mat-sys-corner-full);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font: var(--mat-sys-label-large);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &[data-state='saved'] {
+    --pill-fg: var(--app-status-approved-fg);
+    --pill-bg: var(--app-status-approved-bg);
+  }
+
+  &[data-state='error'] {
+    --pill-fg: var(--mat-sys-on-error-container);
+    --pill-bg: var(--mat-sys-error-container);
+    padding-inline-end: 4px;
+  }
+}
+
+.save-status__error {
+  color: inherit;
+}
+
+// ── Progress + stepper header sit on the page; each step's content is a card ──
+.wizard {
+  scroll-margin-top: 80px;
+}
+
+.step-card {
+  padding: 20px 16px;
+  border: 1px solid var(--app-panel-border);
+  border-radius: var(--app-panel-radius);
+  background: var(--app-panel);
+  box-shadow: var(--app-shadow-panel);
+
+  @include bp.from(bp.$tablet) {
+    padding: 24px;
+  }
+
+  @include bp.from(bp.$desktop) {
+    padding: 28px 32px;
+  }
+}
+
+.wizard-progress {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-bottom: 4px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.wizard-progress__step {
+  font: var(--mat-sys-title-small);
+  font-weight: 600;
+}
+
+.wizard-progress__count {
+  margin-inline-end: 6px;
+  color: var(--mat-sys-primary);
+}
+
+.wizard-progress__fields {
+  font: var(--mat-sys-body-small);
+  color: var(--app-muted);
+}
+
+.wizard-progress__bar {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-height: 6px,
+      track-height: 6px,
+      track-color: var(--mat-sys-surface-container-high),
+    )
+  );
+}
+
+.wizard-stepper {
+  @include mat.stepper-overrides(
+    (
+      container-color: transparent,
+      header-done-state-icon-background-color: var(--app-status-approved-fg),
+      header-done-state-icon-foreground-color: var(--app-panel),
+      header-error-state-label-text-color: var(--mat-sys-error),
+      header-error-state-icon-foreground-color: var(--mat-sys-error),
+      header-selected-state-label-text-color: var(--mat-sys-on-surface),
+    )
+  );
+
+  // The horizontal stepper (≥ 960px) pads its header and content by 24px. Pulling the stepper out by
+  // the same amount lines the header icons and the step cards up with the page header and progress bar.
+  @include bp.from(bp.$desktop) {
+    margin-inline: -24px;
+  }
+}
+
+// ── Footer actions inside each step ────────────────────────────────────
+.step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--app-panel-border);
+}
+
+.step-actions__position {
+  font: var(--mat-sys-label-large);
+  color: var(--app-muted);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.discard {
+  @include mat.button-overrides(
+    (
+      text-label-text-color: var(--mat-sys-error),
+    )
+  );
+  margin-inline-start: -12px;
+}
+
+.submit {
+  min-width: 180px;
+}
+
+.action-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+
+  mat-icon {
+    flex: none;
+    font-size: 20px;
+    inline-size: 20px;
+    block-size: 20px;
+  }
+}
